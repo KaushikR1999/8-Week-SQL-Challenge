@@ -4,13 +4,13 @@ SELECT sales.customer_id, SUM(menu.price)
 FROM sales
 INNER JOIN menu
 ON sales.product_id = menu.product_id
-GROUP BY sales.customer_id
+GROUP BY sales.customer_id;
 
 -- 2. How many days has each customer visited the restaurant?
 
 SELECT customer_id, COUNT(DISTINCT order_date)
 FROM sales
-GROUP BY customer_id
+GROUP BY customer_id;
 
 -- 3. What was the first item from the menu purchased by each customer?
 
@@ -19,7 +19,7 @@ FROM (SELECT sales.customer_id, menu.product_name, DENSE_RANK () OVER (PARTITION
 FROM sales
 JOIN menu
 ON sales.product_id = menu.product_id) AS tab
-WHERE rownumber = 1
+WHERE rownumber = 1;
 
 -- 4. What is the most purchased item on the menu and how many times was it purchased by all customers?
 
@@ -29,9 +29,22 @@ JOIN menu
 ON sales.product_id = menu.product_id
 GROUP BY menu.product_name
 ORDER BY COUNT(*) DESC
-LIMIT 1
+LIMIT 1;
 
 -- 5. Which item was the most popular for each customer?
+
+SELECT customer_id, product_name
+FROM (
+SELECT customer_id, product_name, RANK () OVER (PARTITION BY customer_id ORDER BY pdtCount) AS rownumber
+FROM (
+SELECT customer_id, product_name, COUNT(product_name) AS pdtCount
+FROM menu
+JOIN sales
+ON menu.product_id = sales.product_id
+GROUP BY customer_id, product_name
+ORDER BY customer_id, pdtCount DESC) AS rank) AS tab
+WHERE rownumber = 1;
+
 -- 6. Which item was purchased first by the customer after they became a member?
 -- 7. Which item was purchased just before the customer became a member?
 -- 8. What is the total items and amount spent for each member before they became a member?
