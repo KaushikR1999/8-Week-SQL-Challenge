@@ -101,7 +101,7 @@ SELECT customer_id, SUM(points) AS total
 FROM
 (SELECT customer_id, sales.product_id,
 CASE
-	WHEN product_name = 'sushi' THEN price * 10 * 2
+    WHEN product_name = 'sushi' THEN price * 10 * 2
     ELSE price * 10
 END AS points
 FROM sales
