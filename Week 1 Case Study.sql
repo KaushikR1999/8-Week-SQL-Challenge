@@ -123,3 +123,21 @@ ON tab.customer_id = members.customer_id
 WHERE order_date >= join_date AND order_date <= join_date + 7 * INTERVAL '1 day' AND order_date <= '2021-01-31'
 GROUP BY tab.customer_id
 ORDER BY tab.customer_id;
+
+-- Bonus Question
+
+-- Join All The Things
+
+SELECT tab.customer_id, order_date, product_name, price,
+	CASE 
+    	WHEN join_date <= order_date THEN 'Y'
+        ELSE 'N'
+    END AS member   
+FROM
+(SELECT customer_id, order_date, product_name, price
+FROM sales
+JOIN menu
+ON sales.product_id = menu.product_id) AS tab
+LEFT JOIN members
+ON tab.customer_id = members.customer_id
+ORDER BY tab.customer_id, order_date, price DESC
